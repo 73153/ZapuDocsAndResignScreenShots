@@ -1,0 +1,158 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red170\green13\blue145;\red92\green38\blue153;\red0\green116\blue0;
+\red46\green13\blue110;\red196\green26\blue22;\red63\green110\blue116;\red38\green71\blue75;\red28\green0\blue207;
+\red100\green56\blue32;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab866
+\pard\tx866\pardeftab866\pardirnatural
+
+\f0\fs36 \cf0 \CocoaLigature0 - (\cf2 void\cf0 )updateUserProfile:(\cf3 NSDictionary\cf0  *)updateProfileParams\
+\{\
+    \cf4 //    NSLog(@"updateProfileParams: %@",updateProfileParams);\cf0 \
+    \cf2 @autoreleasepool\cf0  \{\
+        \cf2 id\cf0  caller = [updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"caller"\cf0 ];\
+        \cf2 @try\cf0  \{\
+            \cf3 NSDictionary\cf0  *updateProfilePrms = [updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"params"\cf0 ];\
+            \cf7 CPJsonParser\cf0  *parser = [[\cf7 CPJsonParser\cf0  \cf5 alloc\cf0 ] \cf5 init\cf0 ];\
+            \cf4 //TODO\cf0 \
+            \cf4 //           NSDictionary *userDict = [updateProfileParams objectForKey:@"editDict"];\cf0 \
+            \cf4 //NSLog(@"updateProfileParams: %@",updateProfileParams);\cf0 \
+            \cf3 NSString\cf0  *insuranceFrontCardKey = \cf6 @""\cf0 ;\
+            \cf3 NSString\cf0  *insuranceBackCardKey = \cf6 @""\cf0 ;\
+            \cf3 NSString\cf0  *insuranceFrontCard2Key = \cf6 @""\cf0 ;\
+            \cf3 NSString\cf0  *insuranceBackCard2Key = \cf6 @""\cf0 ;\
+            \cf3 NSString\cf0  *insuranceFrontCard3Key = \cf6 @""\cf0 ;\
+            \cf3 NSString\cf0  *insuranceBackCard3Key = \cf6 @""\cf0 ;\
+            \
+            \cf3 NSString\cf0  *avatarCardKey = \cf6 @""\cf0 ;\
+            \cf4 //Avatar Key\cf0 \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"avatar_data"\cf0 ]] && [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"avatar_data"\cf0 ] \cf5 length\cf0 ] > \cf9 0\cf0 )\
+            \{\
+                avatarCardKey = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"avatar_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 7\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+            \}\
+            \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :avatarCardKey] && avatarCardKey.\cf3 length\cf0  > \cf9 0\cf0 ) \{\
+                [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"editDict"\cf0 ] \cf5 addEntriesFromDictionary\cf0 :[[\cf3 NSDictionary\cf0  \cf5 alloc\cf0 ] \cf5 initWithObjectsAndKeys\cf0 :avatarCardKey,\cf6 @"avatar_s3_key"\cf0 , \cf2 nil\cf0 ]];\
+                \cf5 NSLog\cf0 (\cf6 @"avatarCardKey: %@ added:"\cf0 ,avatarCardKey);\
+            \}\
+            \
+            \cf4 //Front key\cf0 \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card_data"\cf0 ]] && [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card_data"\cf0 ] \cf5 length\cf0 ] > \cf9 0\cf0 )\
+            \{\
+                \cf3 NSMutableDictionary\cf0  *dictTemp = [[\cf3 NSMutableDictionary\cf0  \cf5 alloc\cf0 ] \cf5 initWithObjectsAndKeys\cf0 :[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card_data"\cf0 ],\cf6 @"insurance_front_card_data"\cf0 ,[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card2_data"\cf0 ],\cf6 @"insurance_front_card2_data"\cf0 ,[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card3_data"\cf0 ],\cf6 @"insurance_front_card3_data"\cf0 , \cf2 nil\cf0 ];\
+                \
+                insuranceFrontCardKey = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 1\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                \
+                insuranceFrontCard2Key = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card2_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 2\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                \
+                insuranceFrontCard3Key = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_front_card3_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 3\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                \
+                \cf5 NSLog\cf0 (\cf6 @"insuranceFrontCardKey %@"\cf0 ,insuranceFrontCardKey);\
+                \cf5 NSLog\cf0 (\cf6 @"insuranceFrontCard2Key %@"\cf0 ,insuranceFrontCard2Key);\
+                \cf5 NSLog\cf0 (\cf6 @"insuranceFrontCard3Key %@"\cf0 ,insuranceFrontCard3Key);\
+                \
+                \
+            \}\
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :insuranceFrontCardKey] && insuranceFrontCardKey.\cf3 length\cf0  > \cf9 0\cf0 ) \{\
+                \
+                [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"editDict"\cf0 ] \cf5 addEntriesFromDictionary\cf0 :[[\cf3 NSDictionary\cf0  \cf5 alloc\cf0 ] \cf5 initWithObjectsAndKeys\cf0 :insuranceFrontCardKey,\cf6 @"insurance_card_front_s3_key"\cf0 ,insuranceFrontCard2Key,\cf6 @"insurance_card_2_front_s3_key"\cf0 ,insuranceFrontCard3Key,\cf6 @"insurance_card_3_front_s3_key"\cf0 , \cf2 nil\cf0 ]];\
+            \}\
+            \cf4 //Back key\cf0 \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card_data"\cf0 ]] && [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card_data"\cf0 ] \cf5 length\cf0 ] > \cf9 0\cf0 ) \{\
+                \
+                \cf3 NSMutableDictionary\cf0  *dictTemp = [[\cf3 NSMutableDictionary\cf0  \cf5 alloc\cf0 ] \cf5 initWithObjectsAndKeys\cf0 :[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card_data"\cf0 ],\cf6 @"insurance_back_card_data"\cf0 ,[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card2_data"\cf0 ],\cf6 @"insurance_back_card2_data"\cf0 ,[updateProfileParams \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card3_data"\cf0 ],\cf6 @"insurance_back_card3_data"\cf0 , \cf2 nil\cf0 ];\
+                \
+                insuranceBackCardKey = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 4\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                insuranceBackCard2Key = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card2_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 5\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                insuranceBackCard3Key = [\cf2 self\cf0  \cf8 createAmazonsBucketAndPutInsuranceFrontBackImage\cf0 :[dictTemp \cf5 objectForKey\cf0 :\cf6 @"insurance_back_card3_data"\cf0 ] \cf8 andUserId\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ] \cf8 andUrl\cf0 :[[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ] \cf8 andCardType\cf0 :\cf9 6\cf0  \cf8 withAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsAccessKeyId"\cf0 ] \cf8 withSecretAccessKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"awsSecretAccessKey"\cf0 ] \cf8 withBucketName\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"s3BucketName"\cf0 ]];\
+                \
+                \cf5 NSLog\cf0 (\cf6 @"insuranceBackCardKey %@"\cf0 ,insuranceBackCardKey);\
+                \cf5 NSLog\cf0 (\cf6 @"insuranceBackCard2Key %@"\cf0 ,insuranceBackCard2Key);\
+                \cf5 NSLog\cf0 (\cf6 @"insuranceBackCard3Key %@"\cf0 ,insuranceBackCard3Key);\
+                \
+            \}\
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :insuranceBackCardKey] && insuranceBackCardKey.\cf3 length\cf0  > \cf9 0\cf0 ) \{\
+                [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"editDict"\cf0 ] \cf5 addEntriesFromDictionary\cf0 :[[\cf3 NSDictionary\cf0  \cf5 alloc\cf0 ] \cf5 initWithObjectsAndKeys\cf0 :insuranceBackCardKey,\cf6 @"insurance_card_back_s3_key"\cf0 ,insuranceBackCard2Key,\cf6 @"insurance_card_2_back_s3_key"\cf0 ,insuranceBackCard3Key,\cf6 @"insurance_card_3_back_s3_key"\cf0 , \cf2 nil\cf0 ]];\
+            \}\
+            \cf4 //\cf0 \
+            \cf5 NSLog\cf0 (\cf6 @"edit Dict: %@"\cf0 ,[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"editDict"\cf0 ]);\
+            \
+            \cf3 NSDictionary\cf0  *profileInfo = [\cf3 NSDictionary\cf0  \cf5 dictionaryWithObjectsAndKeys\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"editDict"\cf0 ],\cf6 @"user"\cf0 ,[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"auth_token"\cf0 ],\cf6 @"auth_token"\cf0 ,\cf2 nil\cf0 ];\
+            \
+            \cf7 CPJsonWriter\cf0  *writer = [\cf7 CPJsonWriter\cf0  \cf5 new\cf0 ];\
+            \cf3 NSString\cf0  * jsonFormatedString = [writer \cf8 stringWithObject\cf0 :profileInfo];\
+            \cf5 NSLog\cf0 (\cf6 @"body String:%@"\cf0 ,jsonFormatedString);\
+            \cf3 NSString\cf0  *url = [\cf3 NSString\cf0  \cf5 stringWithFormat\cf0 :\cf6 @"%@/users/%@.json"\cf0 ,\
+                             [[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"url"\cf0 ] \cf5 absoluteString\cf0 ],\
+                             [updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"user_id"\cf0 ]\
+                             ];\
+            \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"debug"\cf0 ]])\
+            \{\
+                \cf5 NSLog\cf0 (\cf6 @"ProfileInfo :%@"\cf0 , jsonFormatedString);\
+                \cf5 NSLog\cf0 (\cf6 @"Calling updateprofile with url: %@"\cf0 , url);\
+            \}\
+            \
+            \cf3 NSData\cf0  *responseData = [\cf2 self\cf0  \cf8 createNetworkConnection\cf0 :url \cf8 WithBody\cf0 :jsonFormatedString \cf8 withAPIKey\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"apikey"\cf0 ] \cf8 WithHTTPMethod\cf0 :\cf6 @"PUT"\cf0 ];\
+            \
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"debug"\cf0 ]])\
+                \cf5 NSLog\cf0 (\cf6 @"Response Status Code: %ld"\cf0 , (\cf2 long\cf0 ) \cf7 currentStatusCode\cf0 );\
+            \
+            \cf3 NSString\cf0  *responseString = [[\cf3 NSString\cf0  \cf5 alloc\cf0 ] \cf5 initWithData\cf0 :responseData \cf5 encoding\cf0 : \cf5 NSUTF8StringEncoding\cf0 ];\
+            \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"debug"\cf0 ]])\
+                \cf5 NSLog\cf0 (\cf6 @"Response: %@"\cf0 , responseString);\
+            \
+            \cf3 NSMutableDictionary\cf0  *loggingDict = [[\cf3 NSMutableDictionary\cf0  \cf5 alloc\cf0 ] \cf5 init\cf0 ];\
+            [loggingDict \cf5 addEntriesFromDictionary\cf0 :[\cf3 NSDictionary\cf0  \cf5 dictionaryWithObjectsAndKeys\cf0 :jsonFormatedString?:\cf6 @""\cf0 ,\cf6 @"requested_body"\cf0 ,url?:\cf6 @""\cf0 ,\cf6 @"requested_url"\cf0 ,\cf6 @"PUT"\cf0 ,\cf6 @"http_method"\cf0 ,[\cf2 self\cf0  \cf8 formatedStringFromNow\cf0 ]?:\cf6 @""\cf0 ,\cf6 @"requested_time"\cf0 ,[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"apikey"\cf0 ]?:\cf6 @""\cf0 ,\cf6 @"api_key"\cf0 ,responseString?:\cf6 @""\cf0 ,\cf6 @"response_body"\cf0 ,[\cf3 NSNumber\cf0  \cf5 numberWithInteger\cf0 :\cf7 currentStatusCode\cf0 ]?:\cf6 @""\cf0 ,\cf6 @"response_code"\cf0 , \cf2 nil\cf0 ]];\
+            \
+            \cf3 NSError\cf0  *error = \cf2 nil\cf0 ;\
+            \
+            \cf2 if\cf0  (\cf7 currentStatusCode\cf0  == \cf9 200\cf0  || \cf7 currentStatusCode\cf0  == \cf9 201\cf0  || \cf7 currentStatusCode\cf0  == \cf9 202\cf0 )\
+            \{\
+                \cf4 //                NSArray *responseArray = [parser objectWithString:responseString error:&error];\cf0 \
+                \cf5 NSLog\cf0 (\cf6 @"Successfully Saved."\cf0 );\
+                \cf3 NSDictionary\cf0  *responseDict = [parser \cf8 objectWithString\cf0 :responseString \cf8 error\cf0 :&error];\
+                \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :error]) \{\
+                    error = [\cf2 self\cf0  \cf8 returnError\cf0 :caller \cf8 withObject\cf0 :[parser \cf8 objectWithString\cf0 :responseString \cf8 error\cf0 :\cf2 nil\cf0 ] \cf8 withLoggingDict\cf0 :loggingDict];\
+                    \
+                    \cf2 if\cf0  (caller && [caller \cf5 conformsToProtocol\cf0 :\cf2 @protocol\cf0 (\cf7 CPUserProfileServiceDelegate\cf0 )] && [caller \cf5 respondsToSelector\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:)]) \{\
+                        [caller \cf5 performSelectorOnMainThread\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:) \cf5 withObject\cf0 :error \cf5 waitUntilDone\cf0 :\cf2 NO\cf0 ];\
+                    \}\
+                \}\
+                \cf2 else\cf0  \{\
+                    \cf2 if\cf0  ([\cf2 self\cf0  \cf8 isNotNull\cf0 :[updateProfilePrms \cf5 objectForKey\cf0 :\cf6 @"debug"\cf0 ]])\
+                        \cf5 NSLog\cf0 (\cf6 @"items in profile response: %ld"\cf0 , (\cf2 long\cf0 )[responseDict \cf5 count\cf0 ]);\
+                    \
+                    \cf4 //                    NSDictionary *responseDict = [[NSDictionary alloc] initWithObjectsAndKeys:responseArray,@"response", nil];\cf0 \
+                    \
+                    \cf2 if\cf0  (caller && [caller \cf5 respondsToSelector\cf0 :\cf2 @selector\cf0 (parseUserProfileResponse:)]) \{\
+                        [caller \cf5 performSelectorOnMainThread\cf0 :\cf2 @selector\cf0 (parseUserProfileResponse:) \cf5 withObject\cf0 :responseDict \cf5 waitUntilDone\cf0 :\cf2 NO\cf0 ];\
+                    \}\
+                \}\
+            \}\
+            \cf2 else\cf0 \
+            \{\
+                \cf3 NSError\cf0  *error = [\cf2 self\cf0  \cf8 returnError\cf0 :caller \cf8 withObject\cf0 :[parser \cf8 objectWithString\cf0 :responseString \cf8 error\cf0 :\cf2 nil\cf0 ] \cf8 withLoggingDict\cf0 :loggingDict];\
+                \
+                \cf2 if\cf0  (caller && [caller \cf5 conformsToProtocol\cf0 :\cf2 @protocol\cf0 (\cf7 CPUserProfileServiceDelegate\cf0 )] && [caller \cf5 respondsToSelector\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:)]) \{\
+                    [caller \cf5 performSelectorOnMainThread\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:) \cf5 withObject\cf0 :error \cf5 waitUntilDone\cf0 :\cf2 NO\cf0 ];\
+                \}\
+            \}\
+            parser = \cf2 nil\cf0 ;\
+            responseData = \cf2 nil\cf0 ;\
+            responseString = \cf2 nil\cf0 ;\
+        \}\
+        \cf2 @catch\cf0  (NSException *exception) \{\
+            \cf2 if\cf0  (caller && [caller \cf5 conformsToProtocol\cf0 :\cf2 @protocol\cf0 (\cf7 CPUserProfileServiceDelegate\cf0 )] && [caller \cf5 respondsToSelector\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:)]) \{\
+                \
+                \cf3 NSError\cf0  *error = [\cf3 NSError\cf0  \cf5 errorWithDomain\cf0 :\cf6 @"org.chatterplug.ErrorDomain"\cf0  \cf5 code\cf0 :\cf10 CPException\cf0  \cf5 userInfo\cf0 :[exception \cf5 userInfo\cf0 ]];\
+                \
+                [caller \cf5 performSelectorOnMainThread\cf0 :\cf2 @selector\cf0 (didFailToUpdateUserProfileWithError:) \cf5 withObject\cf0 :error \cf5 waitUntilDone\cf0 :\cf2 NO\cf0 ];\
+            \}\
+        \}\
+        \cf2 @finally\cf0  \{\
+            \
+        \}\
+    \}\
+\}}

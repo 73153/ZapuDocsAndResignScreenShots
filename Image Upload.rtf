@@ -1,0 +1,108 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1343\cocoasubrtf140
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red92\green38\blue153;\red46\green13\blue110;\red100\green56\blue32;
+\red63\green110\blue116;\red170\green13\blue145;\red38\green71\blue75;\red196\green26\blue22;\red28\green0\blue207;
+\red0\green116\blue0;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab866
+\pard\tx866\pardeftab866\pardirnatural
+
+\f0\fs36 \cf0 \CocoaLigature0  \cf2 NSString\cf0  *strUserId = [[\cf2 NSUserDefaults\cf0  \cf3 standardUserDefaults\cf0 ] \cf3 objectForKey\cf0 :\cf4 UserId\cf0 ];\
+    \cf5 AppDelegate\cf0  *appDelegateTemp = (\cf5 AppDelegate\cf0  *)[[\cf2 UIApplication\cf0  \cf3 sharedApplication\cf0 ]\cf3 delegate\cf0 ];\
+    \
+    \cf6 if\cf0 ([appDelegateTemp \cf7 checkInternetConnection\cf0 ]==\cf6 true\cf0 )\
+    \{\
+        [[\cf5 ApplicationData\cf0  \cf7 sharedInstance\cf0 ] \cf7 showLoader\cf0 ];\
+        \
+        [localDict \cf3 setObject\cf0 :\cf8 @"add"\cf0  \cf3 forKey\cf0 :\cf8 @"mode"\cf0 ];\
+        [localDict \cf3 setObject\cf0 :[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"%@"\cf0 ,strUserId]  \cf3 forKey\cf0 :\cf8 @"nUserId"\cf0 ];\
+        \cf5 MBProgressHUD\cf0  *hud = [\cf5 MBProgressHUD\cf0  \cf7 showHUDAddedTo\cf0 :\cf6 self\cf0 .\cf2 view\cf0  \cf7 animated\cf0 :\cf6 YES\cf0 ];\
+        hud.\cf5 mode\cf0  = \cf7 MBProgressHUDModeIndeterminate\cf0 ;\
+        [hud \cf7 show\cf0 :\cf6 YES\cf0 ];\
+        \cf2 NSData\cf0  *imageData = \cf3 UIImageJPEGRepresentation\cf0 ([localDict \cf3 valueForKey\cf0 :\cf8 @"sImage"\cf0 ], \cf9 0.5\cf0 );\
+        \cf2 NSDictionary\cf0  *parameters=localDict;\
+        \
+        \cf2 NSMutableURLRequest\cf0  *request = [[\cf2 NSMutableURLRequest\cf0  \cf3 alloc\cf0 ] \cf3 init\cf0 ];\
+        [request \cf3 setCachePolicy\cf0 :\cf3 NSURLRequestReloadIgnoringLocalCacheData\cf0 ];\
+        [request \cf3 setHTTPShouldHandleCookies\cf0 :\cf6 NO\cf0 ];\
+        [request \cf3 setTimeoutInterval\cf0 :\cf9 30\cf0 ];\
+        [request \cf3 setHTTPMethod\cf0 :\cf8 @"POST"\cf0 ];\
+        \cf2 NSString\cf0  *boundary = \cf8 @"0xKhTmLbOuNdArY"\cf0 ;\
+        \cf10 // set Content-Type in HTTP header\cf0 \
+        \cf2 NSString\cf0  *contentType = [\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"multipart/form-data; boundary=%@"\cf0 , boundary];\
+        [request \cf3 setValue\cf0 :contentType \cf3 forHTTPHeaderField\cf0 : \cf8 @"Content-Type"\cf0 ];\
+        \
+        \cf10 // post body\cf0 \
+        \cf2 NSMutableData\cf0  *body = [\cf2 NSMutableData\cf0  \cf3 data\cf0 ];\
+        \
+        \cf10 // add params (all params are strings)\cf0 \
+        \cf6 for\cf0 (\cf2 NSString\cf0  *param \cf6 in\cf0  parameters) \{\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"--%@\\r\\n"\cf0 , boundary] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"Content-Disposition: form-data; name=\\"%@\\"\\r\\n\\r\\n"\cf0 , param] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"%@\\r\\n"\cf0 , [parameters \cf3 objectForKey\cf0 :param]] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+        \}\
+        \cf2 NSString\cf0  *FileParamConstant = \cf8 @"sImage"\cf0 ;\
+        \cf10 // add image data\cf0 \
+        \cf10 //NSData *imageData = UIImageJPEGRepresentation(imageToPost, 1.0);\cf0 \
+        \cf6 if\cf0  (imageData) \{\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"--%@\\r\\n"\cf0 , boundary] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"Content-Disposition: form-data; name=\\"%@\\"; filename=\\"image.jpg\\"\\r\\n"\cf0 , FileParamConstant] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+            [body \cf3 appendData\cf0 :[\cf8 @"Content-Type: image/jpeg\\r\\n\\r\\n"\cf0  \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+            [body \cf3 appendData\cf0 :imageData];\
+            [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"\\r\\n"\cf0 ] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+        \}\
+        \
+        [body \cf3 appendData\cf0 :[[\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"--%@--\\r\\n"\cf0 , boundary] \cf3 dataUsingEncoding\cf0 :\cf3 NSUTF8StringEncoding\cf0 ]];\
+        \
+        \cf10 // setting the body of the post to the reqeust\cf0 \
+        [request \cf3 setHTTPBody\cf0 :body];\
+        [request \cf3 setURL\cf0 :[\cf2 NSURL\cf0  \cf3 URLWithString\cf0 :\cf4 KAddClient\cf0 ]];\
+        \
+        [\cf2 NSURLConnection\cf0  \cf3 sendAsynchronousRequest\cf0 :request\
+                                           \cf3 queue\cf0 :[\cf2 NSOperationQueue\cf0  \cf3 mainQueue\cf0 ]\
+                               \cf3 completionHandler\cf0 :^(\cf2 NSURLResponse\cf0  *response, \cf2 NSData\cf0  *data, \cf2 NSError\cf0  *error) \{\
+                                   \
+                                   [hud \cf3 setHidden\cf0 :\cf6 YES\cf0 ];\
+                                   \cf2 NSHTTPURLResponse\cf0 * httpResponse = (\cf2 NSHTTPURLResponse\cf0 *)response;\
+                                   \
+                                   \cf6 if\cf0  ([httpResponse \cf3 statusCode\cf0 ] == \cf9 200\cf0 ) \{\
+                                       \cf2 NSError\cf0  *errorJson=\cf6 nil\cf0 ;\
+                                       \cf2 NSDictionary\cf0 * responseDict = [\cf2 NSJSONSerialization\cf0  \cf3 JSONObjectWithData\cf0 :data \cf3 options\cf0 :\cf3 kNilOptions\cf0  \cf3 error\cf0 :&errorJson];\
+                                       \
+                                       \cf3 NSLog\cf0 (\cf8 @"responseDict=%@"\cf0 ,responseDict);\
+                                       \cf6 if\cf0 ([ [\cf2 NSString\cf0  \cf3 stringWithFormat\cf0 :\cf8 @"%@"\cf0 , [responseDict \cf3 valueForKey\cf0 :\cf8 @"status"\cf0 ] ] \cf3 isEqualToString\cf0 :\cf8 @"1"\cf0  ])\
+                                       \{\
+                                           [\cf6 self\cf0  \cf7 insertClientToLocalDatabase\cf0 :\cf6 true\cf0 ];\
+                                           \
+                                           \cf2 UIAlertView\cf0  *alertSuccess = [[\cf2 UIAlertView\cf0  \cf3 alloc\cf0 ] \cf3 initWithTitle\cf0 :\cf8 @"Success"\cf0  \cf3 message\cf0 :\cf8 @"Client added successfully"\cf0  \cf3 delegate\cf0 :\cf6 self\cf0  \cf3 cancelButtonTitle\cf0 :\cf8 @"OK"\cf0  \cf3 otherButtonTitles\cf0 :\cf6 nil\cf0 , \cf6 nil\cf0 ];\
+                                           alertSuccess.\cf2 tag\cf0  = \cf9 1\cf0 ;\
+                                           [alertSuccess \cf3 show\cf0 ];\
+                                       \}\
+                                       \cf6 else\cf0 \
+                                       \{\
+                                           \
+                                           \cf2 UIAlertView\cf0  *alertSuccess = [[\cf2 UIAlertView\cf0  \cf3 alloc\cf0 ] \cf3 initWithTitle\cf0 :\cf8 @"Failed"\cf0  \cf3 message\cf0 :\cf8 @"Failed to add client"\cf0  \cf3 delegate\cf0 :\cf6 self\cf0  \cf3 cancelButtonTitle\cf0 :\cf8 @"OK"\cf0  \cf3 otherButtonTitles\cf0 :\cf6 nil\cf0 , \cf6 nil\cf0 ];\
+                                           alertSuccess.\cf2 tag\cf0  = \cf9 1\cf0 ;\
+                                           [alertSuccess \cf3 show\cf0 ];\
+                                       \}\
+                                       \cf3 NSLog\cf0 (\cf8 @"success"\cf0 );\
+                                   \}\
+                                   \cf6 else\cf0 \
+                                   \{\
+                                       \cf2 UIAlertView\cf0  *alertSuccess = [[\cf2 UIAlertView\cf0  \cf3 alloc\cf0 ] \cf3 initWithTitle\cf0 :\cf8 @"Failed"\cf0  \cf3 message\cf0 :\cf8 @"Image was not uploaded try again"\cf0  \cf3 delegate\cf0 :\cf6 self\cf0  \cf3 cancelButtonTitle\cf0 :\cf8 @"OK"\cf0  \cf3 otherButtonTitles\cf0 :\cf6 nil\cf0 , \cf6 nil\cf0 ];\
+                                       alertSuccess.\cf2 tag\cf0  = \cf9 1\cf0 ;\
+                                       [alertSuccess \cf3 show\cf0 ];\
+                                   \}\
+                               \}];\
+        \
+    \}\
+    \cf6 else\cf0 \
+    \{\
+        [\cf6 self\cf0  \cf7 insertClientToLocalDatabase\cf0 :\cf6 false\cf0 ];\
+        \cf2 UIAlertView\cf0  *alert = [[\cf2 UIAlertView\cf0  \cf3 alloc\cf0 ] \cf3 initWithTitle\cf0 :\cf8 @"Data Saved"\cf0                                                    \cf3 message\cf0 :\cf8 @"Client data has been successfully added."\cf0 \
+                                                       \cf3 delegate\cf0 :\cf6 self\cf0 \
+                                              \cf3 cancelButtonTitle\cf0 :\cf8 @"Ok"\cf0 \
+                                              \cf3 otherButtonTitles\cf0 : \cf6 nil\cf0 , \cf6 nil\cf0 ];\
+        [alert \cf3 show\cf0 ];\
+    \}\
+}
